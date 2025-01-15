@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class Cart {
+class Favourite {
   final String productName;
   final int productPrice;
   final String category;
@@ -12,7 +12,7 @@ class Cart {
   final String description;
   final String fullName;
 
-  Cart(
+  Favourite(
       {required this.productName,
       required this.productPrice,
       required this.category,
@@ -44,8 +44,8 @@ class Cart {
   String toJson() => json.encode(toMap());
 
   // Convert a Map to a User Object
-  factory Cart.fromMap(Map<String, dynamic> map) {
-    return Cart(
+  factory Favourite.fromMap(Map<String, dynamic> map) {
+    return Favourite(
       productName: map['productName'] as String? ?? "",
       productPrice: map['productPrice'] as int? ?? 0,
       category: map['category'] as String? ?? "",
@@ -59,6 +59,6 @@ class Cart {
     );
   }
 
-  factory Cart.fromJson(String source) =>
-      Cart.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Favourite.fromJson(String source) =>
+      Favourite.fromMap(json.decode(source) as Map<String, dynamic>);
 }

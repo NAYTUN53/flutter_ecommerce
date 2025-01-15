@@ -26,7 +26,8 @@ class _InnerCategoryContentWidgetState
   late Future<List<Subcategory>> _subcategories;
   late Future<List<Product>> futureProducts;
   final SubcategoryController _subcategoryController = SubcategoryController();
-  final ProductController _productController = ProductController();
+  final ProductController productControllerData = ProductController();
+
   @override
   void initState() {
     super.initState();

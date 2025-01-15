@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:untitled/controls/product_controller.dart';
-import 'package:untitled/models/product.dart';
 import 'package:untitled/providers/product_provider.dart';
+import 'package:untitled/providers/top_rated_product_provider.dart';
 import 'package:untitled/views/screens/nav_screens/widgets/product_item_widget.dart';
 
-class PopularProductWidget extends ConsumerStatefulWidget {
-  const PopularProductWidget({super.key});
+class TopRatedProductWidget extends ConsumerStatefulWidget {
+  const TopRatedProductWidget({super.key});
 
   @override
-  ConsumerState<PopularProductWidget> createState() =>
-      _PopularProductWidgetState();
+  ConsumerState<TopRatedProductWidget> createState() =>
+      _TopRatedProductWidgetState();
 }
 
-class _PopularProductWidgetState extends ConsumerState<PopularProductWidget> {
+class _TopRatedProductWidgetState extends ConsumerState<TopRatedProductWidget> {
   bool isLoading = true;
   @override
   void initState() {
@@ -31,11 +31,10 @@ class _PopularProductWidgetState extends ConsumerState<PopularProductWidget> {
   Future<void> _fetchProduct() async {
     final ProductController productController = ProductController();
     try {
-      List<Product> products = await productController.loadPopularProduct();
-
+      final topRatedProducts = await productController.loadTopRatedProduct();
       ref
-          .read(productProvider.notifier)
-          .setProducts(products); // Store products in provider
+          .read(topRatedProductProvider.notifier)
+          .setProducts(topRatedProducts); // Store products in provider
     } catch (e) {
       throw Exception("Error in provider $e");
     } finally {
@@ -47,22 +46,21 @@ class _PopularProductWidgetState extends ConsumerState<PopularProductWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final products = ref.watch(productProvider);
+    final topRatedProducts = ref.watch(topRatedProductProvider);
     return SizedBox(
       height: 200,
       child: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
-            )
+              color: Colors.blue,
+            ))
           : ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
-              itemCount: products.length,
+              itemCount: topRatedProducts.length,
               itemBuilder: (context, index) {
-                final product = products[index];
-                return ProductItemWidget(product: product);
+                final topRatedProduct = topRatedProducts[index];
+                return ProductItemWidget(product: topRatedProduct);
               }),
     );
   }

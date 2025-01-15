@@ -20,6 +20,8 @@ class ProductController {
             .toList();
 
         return products;
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         throw Exception("Popular products failed to load");
       }
@@ -43,8 +45,63 @@ class ProductController {
                 (products) => Product.fromMap(products as Map<String, dynamic>))
             .toList();
         return products;
+      } else if (response.statusCode == 404) {
+        return [];
       } else {
         throw Exception("Popular products failed to load");
+      }
+    } catch (e) {
+      throw Exception("Request Error: $e");
+    }
+  }
+
+  // Display related product by subcategory
+  Future<List<Product>> loadRelatedProductsBySubcategory(
+      String productId) async {
+    try {
+      http.Response response = await http.get(
+          Uri.parse('$uri/api/related-products-by-subcategory/$productId'),
+          headers: <String, String>{
+            "Content-Type": "application/json; charset=UTF-8"
+          });
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+        List<Product> relatedProducts = data
+            .map(
+                (products) => Product.fromMap(products as Map<String, dynamic>))
+            .toList();
+        return relatedProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Failed to load related products ");
+      }
+    } catch (e) {
+      throw Exception("Request Error: $e");
+    }
+  }
+
+  // Get the top 10 highest rated products
+  Future<List<Product>> loadTopRatedProduct() async {
+    try {
+      http.Response response = await http.get(
+          Uri.parse('$uri/api/top-related-products'),
+          headers: <String, String>{
+            "Content-Type": "application/json; charset=UTF-8"
+          });
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+        List<Product> topRatedProducts = data
+            .map(
+                (products) => Product.fromMap(products as Map<String, dynamic>))
+            .toList();
+        return topRatedProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Failed to load top related products ");
       }
     } catch (e) {
       throw Exception("Request Error: $e");

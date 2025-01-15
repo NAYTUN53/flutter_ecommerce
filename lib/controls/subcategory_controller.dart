@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/global_variables.dart';
 import '../models/subcategory.dart';
@@ -20,18 +19,14 @@ class SubcategoryController {
               .map((subcategory) => Subcategory.fromJson(subcategory))
               .toList();
         } else {
-          debugPrint("Subcategories not found");
           return [];
         }
       } else if (response.statusCode == 404) {
-        debugPrint("Subcategories not found");
         return [];
       } else {
-        debugPrint("failed to fetch subcategories");
         return [];
       }
     } catch (e) {
-      debugPrint('error fetching categories $e');
       return [];
     }
   }

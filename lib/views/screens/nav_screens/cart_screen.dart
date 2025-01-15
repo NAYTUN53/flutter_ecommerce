@@ -18,7 +18,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final cartData = ref.watch(cartProvider);
-    final _cartProvider = ref.read(cartProvider.notifier);
+    final cartProviderData = ref.read(cartProvider.notifier);
     final totalAmount = ref.read(cartProvider.notifier).calculateTotalAmount();
     return Scaffold(
       appBar: PreferredSize(
@@ -214,7 +214,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                     children: [
                                       InkWell(
                                         onTap: () {
-                                          _cartProvider.increamentCartItem(
+                                          cartProviderData.increamentCartItem(
                                               cartItem.productId);
                                         },
                                         child: Container(
@@ -241,7 +241,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          _cartProvider.decrementCartItem(
+                                          cartProviderData.decrementCartItem(
                                               cartItem.productId);
                                         },
                                         child: Container(
@@ -264,7 +264,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                   ),
                                   IconButton(
                                       onPressed: () {
-                                        _cartProvider
+                                        cartProviderData
                                             .removeCartItem(cartItem.productId);
                                       },
                                       icon: const Icon(
@@ -327,14 +327,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             Align(
               alignment: const Alignment(1, -1),
               child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return CheckoutScreen();
-                    }),
-                  );
-                },
+                onTap: totalAmount == 0.0
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return const CheckoutScreen();
+                          }),
+                        );
+                      },
                 child: Container(
                   width: 150,
                   height: 71,

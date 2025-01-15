@@ -5,12 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/global_variables.dart';
 import 'package:untitled/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:untitled/providers/delivered_order_count_provider.dart';
 import 'package:untitled/providers/user_provider.dart';
 import 'package:untitled/services/manage_http_response.dart';
 import 'package:untitled/views/screens/authentication_screens/login_screen.dart';
 import 'package:untitled/views/screens/main_screen.dart';
-
-final providerContainer = ProviderContainer();
 
 class AuthController {
   Future<void> signUpUsers(
@@ -48,7 +47,10 @@ class AuthController {
   }
 
   Future<void> signInUsers(
-      {required context, required email, required password}) async {
+      {required BuildContext context,
+      required email,
+      required password,
+      required WidgetRef ref}) async {
     try {
       http.Response response = await http.post(Uri.parse('$uri/api/signin'),
           body: jsonEncode({'email': email, 'password': password}),
@@ -67,7 +69,7 @@ class AuthController {
 
             //Save user data after converting json to dart object
             final userJson = jsonEncode(jsonDecode(response.body)['user']);
-            providerContainer.read(userProvider.notifier).setUser(userJson);
+            ref.read(userProvider.notifier).setUser(userJson);
             await preferences.setString('user', userJson);
 
             Navigator.pushAndRemoveUntil(
@@ -82,7 +84,8 @@ class AuthController {
   }
 
   // SignOut
-  Future<void> signOutUser({required context}) async {
+  Future<void> signOutUser(
+      {required BuildContext context, required WidgetRef ref}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -91,7 +94,8 @@ class AuthController {
       await preferences.remove('user');
 
       // clear the user state
-      providerContainer.read(userProvider.notifier).signOut();
+      ref.read(userProvider.notifier).signOut();
+      ref.read(delveredOrderCountProvider.notifier).resetCount();
 
       // navigate the user back to the login screen
       Navigator.pushAndRemoveUntil(
@@ -101,6 +105,48 @@ class AuthController {
       showSnackBar(context, "Successfully Sign Out");
     } catch (e) {
       showSnackBar(context, "error in signing out. The error is $e");
+    }
+  }
+
+  // Update user's state, city and locality
+  Future<void> updateUserAddress({
+    required BuildContext context,
+    required String id,
+    required String state,
+    required String city,
+    required String locality,
+    required WidgetRef ref,
+  }) async {
+    try {
+      // Make http put request to update user's status
+      http.Response response = await http.put(Uri.parse("$uri/api/users/$id"),
+          body:
+              jsonEncode({'state': state, 'city': city, 'locality': locality}),
+          headers: <String, String>{
+            "Content-Type": "application/json; charset=UTF-8"
+          });
+      manageHttpResponse(
+          response: response,
+          context: context,
+          onSuccess: () async {
+            // Decode the updated user's data from the response body to dart object
+            final updatedUser = jsonDecode(response.body);
+
+            // store in shared preferences
+            SharedPreferences sharedPreferences =
+                await SharedPreferences.getInstance();
+
+            // Encode the updated user's data as json string to store in shared preference
+            final userJson = jsonEncode(updatedUser);
+
+            // update the application state with the updated user's data using riverpod
+            ref.read(userProvider.notifier).setUser(userJson);
+
+            // Store in local storage using shared preference
+            await sharedPreferences.setString('user', userJson);
+          });
+    } catch (e) {
+      showSnackBar(context, "error in updating user's status. The error is $e");
     }
   }
 }

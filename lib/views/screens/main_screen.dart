@@ -21,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     const CategoryScreen(),
     const StoresScreen(),
     const CartScreen(),
-    AccountScreen()
+    const AccountScreen()
   ];
   @override
   Widget build(BuildContext context) {
