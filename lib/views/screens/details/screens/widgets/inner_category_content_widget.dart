@@ -5,6 +5,7 @@ import 'package:untitled/controls/subcategory_controller.dart';
 import 'package:untitled/models/category.dart';
 import 'package:untitled/models/product.dart';
 import 'package:untitled/models/subcategory.dart';
+import 'package:untitled/views/screens/details/screens/subcategory_product_screen.dart';
 import 'package:untitled/views/screens/details/screens/widgets/inner_banner_widget.dart';
 import 'package:untitled/views/screens/details/screens/widgets/inner_header_widget.dart';
 import 'package:untitled/views/screens/details/screens/widgets/subcategory_tile_widget.dart';
@@ -96,9 +97,21 @@ class _InnerCategoryContentWidgetState
                                       end > subcategories.length
                                           ? subcategories.length
                                           : end)
-                                  .map((subcategory) => SubcategoryTileWidget(
-                                      image: subcategory.image,
-                                      title: subcategory.subCategoryName))
+                                  .map((subcategory) => GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SubcategoryProductScreen(
+                                                        subcategory:
+                                                            subcategory)),
+                                          );
+                                        },
+                                        child: SubcategoryTileWidget(
+                                            image: subcategory.image,
+                                            title: subcategory.subCategoryName),
+                                      ))
                                   .toList(),
                             ),
                           );

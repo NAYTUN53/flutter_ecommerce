@@ -60,7 +60,10 @@ class _TopRatedProductWidgetState extends ConsumerState<TopRatedProductWidget> {
               itemCount: topRatedProducts.length,
               itemBuilder: (context, index) {
                 final topRatedProduct = topRatedProducts[index];
-                return ProductItemWidget(product: topRatedProduct);
+                return Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8),
+                  child: ProductItemWidget(product: topRatedProduct),
+                );
               }),
     );
   }

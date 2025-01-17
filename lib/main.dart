@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/providers/user_provider.dart';
 import 'package:untitled/views/screens/authentication_screens/login_screen.dart';
 import 'package:untitled/views/screens/main_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+      "pk_test_51QEnSFBr99m9gsdtsG3BsSXa4CWJx8flLr5VtPeSxvSBXPr6rAAfnNhaHRqd15DgyF5ogS8Phe5CMw0e0FEoSK8o006irobJqD";
+  Stripe.instance.applySettings();
   runApp(const ProviderScope(child: MyApp()));
 }
 

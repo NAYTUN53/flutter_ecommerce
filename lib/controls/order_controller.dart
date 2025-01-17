@@ -121,4 +121,35 @@ class OrderController {
       throw Exception("Error: error fetching in delivered order count");
     }
   }
+
+  // Make payment intent
+
+  Future<Map<String, dynamic>> createPaymentIntent(
+      {required int amount, required String currency}) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String? token = preferences.getString("auth_token");
+
+      http.Response response =
+          await http.post(Uri.parse("$uri/api/payment-intent"),
+              headers: <String, String>{
+                "Content-Type": "application/json; charset=UTF-8",
+                "x-auth-token": token!,
+              },
+              body: jsonEncode({
+                "amount": amount,
+                "currency": currency,
+              }));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 404) {
+        return {};
+      } else {
+        throw Exception("Error in creating payment intent");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

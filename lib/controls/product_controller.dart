@@ -107,4 +107,54 @@ class ProductController {
       throw Exception("Request Error: $e");
     }
   }
+
+  // fetch api for displaying subcategory products
+  Future<List<Product>> loadProductBySubcategory(String subCategory) async {
+    try {
+      http.Response response = await http.get(
+          Uri.parse("$uri/api/prducts-by-subcategory/$subCategory"),
+          headers: <String, String>{
+            "Content-Type": "application/json; charset = UTF-8"
+          });
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+        List<Product> products = data.map((product) {
+          return Product.fromMap(product as Map<String, dynamic>);
+        }).toList();
+        return products;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Failed to load subcategory products");
+      }
+    } catch (e) {
+      throw Exception("Error fetching in subcategory products");
+    }
+  }
+
+  // Search Products
+  Future<List<Product>> searchProducts(String query) async {
+    try {
+      http.Response response = await http.get(
+          Uri.parse("$uri/api/search-products?query=$query"),
+          headers: <String, String>{
+            "Content-Type": "application/json; charset = UTF-8"
+          });
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+        List<Product> searchedProducts = data.map((product) {
+          return Product.fromMap(product as Map<String, dynamic>);
+        }).toList();
+        return searchedProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Failed to load searched products");
+      }
+    } catch (e) {
+      throw Exception("Error fetching in searched products");
+    }
+  }
 }

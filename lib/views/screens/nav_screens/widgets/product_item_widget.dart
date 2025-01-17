@@ -33,9 +33,9 @@ class _ProductItemWidgetState extends ConsumerState<ProductItemWidget> {
                     ProductDetailsScreen(product: widget.product)));
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        width: 160,
-        height: 160,
+        // margin: const EdgeInsets.symmetric(horizontal: 8),
+        width: 140,
+        height: 120,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: Colors.grey.shade200),
@@ -43,7 +43,7 @@ class _ProductItemWidgetState extends ConsumerState<ProductItemWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 160,
+              width: 150,
               height: 140,
               decoration: BoxDecoration(
                 color: Colors.grey,
@@ -55,7 +55,7 @@ class _ProductItemWidgetState extends ConsumerState<ProductItemWidget> {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       widget.product.images[0],
-                      width: 160,
+                      width: 150,
                       height: 140,
                       fit: BoxFit.cover,
                     ),

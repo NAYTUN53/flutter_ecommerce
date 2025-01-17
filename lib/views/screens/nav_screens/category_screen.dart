@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled/controls/subcategory_controller.dart';
 import 'package:untitled/providers/category_provider.dart';
 import 'package:untitled/providers/subcategory_provider.dart';
+import 'package:untitled/views/screens/details/screens/subcategory_product_screen.dart';
+import 'package:untitled/views/screens/details/screens/widgets/subcategory_tile_widget.dart';
 import 'package:untitled/views/screens/nav_screens/widgets/header_widget.dart';
 import '../../../controls/category_controller.dart';
 import '../../../models/category.dart';
@@ -26,14 +28,18 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
 
   Future<void> _fetchCategories() async {
     final categories = await CategoryController().loadCategories();
-    ref.read(categoryProvider.notifier).setCategory(categories);
-    for (var category in categories) {
-      if (category.name == "Electronic Devices") {
-        setState(() {
-          _selectedCategory = category;
-        });
-        _fetchSubcategories(category.name);
+    try {
+      ref.read(categoryProvider.notifier).setCategory(categories);
+      for (var category in categories) {
+        if (category.name == "Electronic Devices") {
+          setState(() {
+            _selectedCategory = category;
+          });
+          _fetchSubcategories(category.name);
+        }
       }
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -58,29 +64,31 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
           Expanded(
             flex: 2,
             child: Container(
-                color: Colors.grey.shade200,
-                child: ListView.builder(
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return ListTile(
-                        onTap: () {
-                          setState(() {
-                            _selectedCategory = category;
-                          });
-                          _fetchSubcategories(category.name);
-                        },
-                        title: Text(
-                          category.name,
-                          style: GoogleFonts.quicksand(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: _selectedCategory == category
-                                  ? Colors.blue
-                                  : Colors.black),
-                        ),
-                      );
-                    })),
+              color: Colors.grey.shade200,
+              child: ListView.builder(
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  return ListTile(
+                    onTap: () {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                      _fetchSubcategories(category.name);
+                    },
+                    title: Text(
+                      category.name,
+                      style: GoogleFonts.quicksand(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _selectedCategory == category
+                              ? Colors.blue
+                              : Colors.black),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
 
           // Right side display
@@ -105,14 +113,17 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                             child: Container(
                               height: 150,
                               decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                          _selectedCategory!.banner))),
+                                image: DecorationImage(
+                                  image:
+                                      NetworkImage(_selectedCategory!.banner),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                         subCategories.isNotEmpty
                             ? GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: subCategories.length,
                                 gridDelegate:
@@ -123,31 +134,24 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
                                 ),
                                 itemBuilder: (context, index) {
                                   final subcategory = subCategories[index];
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        width: 50,
-                                        height: 50,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.grey,
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return SubcategoryProductScreen(
+                                                subcategory: subcategory);
+                                          },
                                         ),
-                                        child: Center(
-                                          child: Image.network(
-                                            subcategory.image,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Text(subcategory.subCategoryName,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold)),
-                                      ),
-                                    ],
+                                      );
+                                    },
+                                    child: SubcategoryTileWidget(
+                                        image: subcategory.image,
+                                        title: subcategory.subCategoryName),
                                   );
-                                })
+                                },
+                              )
                             : Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Center(

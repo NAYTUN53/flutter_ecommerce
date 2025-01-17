@@ -28,6 +28,9 @@ class HomeScreen extends StatelessWidget {
               ReusableTextWidget(
                   title: "Top Rated Products", subtitle: "View all>>"),
               TopRatedProductWidget(),
+              SizedBox(
+                height: 50,
+              ),
             ],
           ),
         ));

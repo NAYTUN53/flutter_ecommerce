@@ -24,7 +24,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchProduct();
+    final relatedProducts = ref.read(relatedProductProvider);
+    if (relatedProducts.isEmpty) {
+      _fetchProduct();
+    }
   }
 
   Future<void> _fetchProduct() async {

@@ -108,6 +108,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               ],
             ))
           : SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -276,7 +277,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             ),
                           ),
                         );
-                      })
+                      }),
                 ],
               ),
             ),
